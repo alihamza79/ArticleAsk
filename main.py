@@ -8,12 +8,13 @@ from langchain.document_loaders import UnstructuredURLLoader
 from langchain.vectorstores import FAISS
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from dotenv import load_dotenv
-
+import nltk
 # Define file path for storing processed data
 file_path = "vector_news"
 
 load_dotenv()
 
+nltk.download('punkt_tab')
 # Set page configuration
 st.set_page_config(
     page_title="News Research Assistant",
