@@ -33,10 +33,7 @@ ENV/
 *.swo
 .DS_Store
 
-# Project specific
-vector_news.pkl
-*.pkl
-*.log
+
 
 # Jupyter Notebook
 .ipynb_checkpoints
