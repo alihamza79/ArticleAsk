@@ -1,23 +1,16 @@
 import os
 import streamlit as st
 import pickle
-import time
-import langchain
 from langchain_groq import ChatGroq
 from langchain.chains import RetrievalQAWithSourcesChain
-from langchain.chains.qa_with_sources.loading import load_qa_with_sources_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.document_loaders import UnstructuredURLLoader
 from langchain.vectorstores import FAISS
-from tensorflow import keras
-from sentence_transformers import SentenceTransformer
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-
-
 from dotenv import load_dotenv
 
 # Define file path for storing processed data
-file_path = "vector_news.pkl"
+file_path = "vector_news"
 
 load_dotenv()
 
@@ -106,23 +99,25 @@ if process_url_clicked:
             vectorIndex_hugging = FAISS.from_documents(docs, embedding_model)
             progress_bar.progress(0.9)
             
-            with open(file_path, "wb") as f:
-                pickle.dump(vectorIndex_hugging, f)
+            # Save using FAISS native method
+            vectorIndex_hugging.save_local(file_path)
             
             progress_bar.progress(1.0)
             st.success("✅ Articles processed successfully!")
             main_placeholder.empty()
 
 # Query section
-if os.path.exists(file_path):
+if os.path.exists(file_path + ".faiss"):
     st.markdown("---")
     st.markdown("### Ask Questions About the Articles")
     query = st.text_input("Enter your question:", placeholder="e.g., What are the main topics discussed?")
     
     if query:
         with st.spinner("Analyzing..."):
-            with open(file_path, "rb") as f:
-                vectorStore = pickle.load(f)
+            # Load FAISS index
+            embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+            vectorStore = FAISS.load_local(file_path, embedding_model)
+            
             chain = RetrievalQAWithSourcesChain.from_llm(llm=llm, retriever=vectorStore.as_retriever())
             result = chain({"question": query}, return_only_outputs=True)
             
