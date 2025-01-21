@@ -5,5 +5,6 @@ sentence-transformers
 tensorflow
 faiss-cpu
 unstructured
+unstructured[standard]
 python-dotenv
 huggingface-hub
