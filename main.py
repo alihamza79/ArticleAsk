@@ -14,7 +14,7 @@ file_path = "vector_news"
 
 load_dotenv()
 
-nltk.download('punkt_tab')
+nltk.download('averaged_perceptron_tagger_eng')
 # Set page configuration
 st.set_page_config(
     page_title="News Research Assistant",
